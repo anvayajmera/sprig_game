@@ -98,3 +98,51 @@ onInput("i", () => {
     deadStatus = false;
   }
 });
+
+function spawnRock() {
+  let x = Math.floor(Math.random() * 8);
+  let y = 0; 
+  addSprite(x, y, ROCK);
+}
+
+function moveRocks() {
+  let allRocks = getAll(ROCK);
+  for (let rock of allRocks) {
+    rock.y += 1;
+  }
+}
+
+function despawnRocks() {
+  let allRocks = getAll(ROCK);
+  for (let rock of allRocks) {
+    if (rock.y >= 7) {
+      rock.remove();
+    }
+  }
+}
+
+function checkCollision() {
+  let allRocks = getAll(ROCK);
+  let player = getFirst(PLAYER);
+  for (let rock of allRocks) {
+    if (rock.x === player.x && rock.y === player.y) {
+      deadStatus = true;
+      return true;
+    }
+  }
+  return false;
+}
+
+var gameLoop = setInterval(() => {
+  if (!deadStatus) {
+    despawnRocks();
+    moveRocks();
+    spawnRock();
+  }
+
+  if (checkCollision()) {
+    deadStatus = true;
+    addText("GAME OVER", { x: 6, y: 7, color: color`6` });
+    addText("i to Restart", { x: 4, y: 10, color: color`6` });
+  }
+}, 1000);
